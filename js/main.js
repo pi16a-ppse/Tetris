@@ -116,6 +116,20 @@ let frame = {
                 }
             }
         }
+        for (let i = 0; i < game.nextFigure.length; ++i) {
+            for (let j = 0; j < game.nextFigure[0].length; ++j) {
+                if (game.nextFigure[i][j]) {
+                    this.setColor(game.nextFigure[i][j]);
+                    let x = i + nextFrameSI + 1;
+                    if (game.nextFigure.length < 3) {
+                        ++x;
+                    }
+                    let y = j + 2;
+                    this.drawCell(x, y);
+                }
+            }
+        }
+        this.setColor(0);
         scoreElement.innerText = game.score;
         if (game.pause) {
             let left = nextFrameSI * settings.offsetSize;
