@@ -116,6 +116,15 @@ let frame = {
                 }
             }
         }
+        scoreElement.innerText = game.score;
+        if (game.pause) {
+            let left = nextFrameSI * settings.offsetSize;
+            let right = (nextFrameEI + 1) * settings.offsetSize;
+            let x = (right + left) / 2;
+            let y = 7 * settings.offsetSize;
+            let text = (game.end) ? 'GAME OVER' : 'PAUSE';
+            this.context.fillText(text, x, y);
+        }
     },
 
     drawCell: function(i, j) {
