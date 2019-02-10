@@ -3,9 +3,12 @@ const settings = {
     droppingSpeed: 350,
     cellSize: 20,
     gapSize: 1,
-    fieldSizeX: 10,
-    fieldSizeY: 20
+    offsetSize: undefined,
+    fieldSX: 10,
+    fieldSY: 20
 }
+
+settings.offsetSize = settings.cellSize + settings.gapSize;
 
 const colors = {
     light: '#DADADA',
@@ -42,14 +45,16 @@ let game = {
     end: false,
 
     create: function() {
-        pause = true;
-        score = 0;
-        speed = settings.defaultSpeed;
-        over = false;
-        matrix = new Array(10);
-        for (let i = 0; i < 10; i++) {
-            matrix[i] = new Array(20);
-            for (let j = 0; j < 20; j++) matrix[i][j] = 0;
+        this.pause = true;
+        this.score = 0;
+        this.speed = settings.defaultSpeed;
+        this.over = false;
+        this.matrix = new Array(settings.fieldSX);
+        for (let i = 0; i < settings.fieldSX; ++i) {
+            this.matrix[i] = new Array(settings.fieldSY);
+            for (let j = 0; j < settings.fieldSY; ++j) {
+                this.matrix[i][j] = -1;
+            }
         }
         this.addFigure();
         this.setSpeed();
@@ -61,11 +66,14 @@ let game = {
     },
 
     addFigure: function() {
-        figure = this.nextFigure != undefined ? this.nextFigure : figures[this.random(0, 6)];
-        figurePosition = [3, 0];
+        this.figure = this.nextFigure;
+        if (this.nextFigure != undefined) {
+            this.figure = figures[this.random(0, 6)];
+        }
+        this.figurePosition = [3, 0];
         do {
-            nextFigure = figures[this.random(0, 6)];
-        } while (nextFigure == figure);
+            this.nextFigure = figures[this.random(0, 6)];
+        } while (this.nextFigure == this.figure);
     },
 
     setSpeed: function(speed) {
@@ -76,43 +84,68 @@ let game = {
     }
 }
 
+let scoreElement = document.getElementById('score');
+
 let frame = {
     canvas: document.getElementById('canvas'),
-    context: canvas.getContext('2d'),
+    context: undefined,
 
     drawFrame: function() {
         this.setColor();
         this.context.fillRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < settings.fieldSX + 2; ++i) {
+            for (let j = 0; j < settings.fieldSY + 2; ++j) {
+                let color = 0;
+                if (i > 0 && 
+                    j > 0 && 
+                    i < settings.fieldSX + 1 && 
+                    j < settings.fieldSY + 1) {
+                    color = game.matrix[i - 1][j - 1];
+                }
+                this.setColor(color);
+                this.drawCell(i, j);
+            }
+        }
+    },
+
+    drawCell: function(i, j) {
+        this.context.fillRect(
+            i * settings.offsetSize, 
+            j * settings.offsetSize, 
+            settings.cellSize,
+            settings.cellSize
+        );
     },
 
     setColor: function(code = -1) {
         this.context.fillStyle = 
-        (code == 0) ? colors.light : 
-        (code == 1) ? colors.blue : 
-        (code == 2) ? colors.red : 
-        (code == 3) ? colors.yellow : 
-        (code == 4) ? colors.green : 
-        (code == 5) ? colors.purple : 
+        (code == 0) ? colors.light :
+        (code == 1) ? colors.blue :
+        (code == 2) ? colors.red :
+        (code == 3) ? colors.yellow :
+        (code == 4) ? colors.green :
+        (code == 5) ? colors.purple :
         (code == 6) ? colors.lightBlue :
-        (code == 7) ? colors.pink : 
+        (code == 7) ? colors.pink :
         (code == 8) ? colors.gray :
         colors.dark;
     },
 
-    setSize: function() {
-        let fieldSizeX = 7;
-        fieldSizeX += settings.fieldSizeX + 2;
-        let fieldSizeY = settings.fieldSizeY + 2;
-        let fieldWidth = fieldSizeX * settings.cellSize;
-        fieldWidth += (fieldSizeX - 1) * settings.gapSize;
-        let fieldHeight = fieldSizeY * settings.cellSize;
-        fieldHeight += (fieldSizeY - 1) * settings.gapSize;
-        canvas.width = fieldWidth;
-        canvas.style.width = fieldWidth + 'px';
-        canvas.height = fieldHeight;
-        canvas.style.height = fieldHeight + 'px';
+    initialize: function() {
+        let fieldSX = 7;
+        fieldSX += settings.fieldSX + 2;
+        let fieldSY = settings.fieldSY + 2;
+        let fieldWidth = fieldSX * settings.cellSize;
+        fieldWidth += (fieldSX - 1) * settings.gapSize;
+        let fieldHeight = fieldSY * settings.cellSize;
+        fieldHeight += (fieldSY - 1) * settings.gapSize;
+        this.canvas.width = fieldWidth;
+        this.canvas.style.width = fieldWidth + 'px';
+        this.canvas.height = fieldHeight;
+        this.canvas.style.height = fieldHeight + 'px';
+        this.context = canvas.getContext('2d');
     }
 }
 
-frame.setSize();
+frame.initialize();
 game.create();
