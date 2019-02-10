@@ -106,6 +106,16 @@ let frame = {
                 this.drawCell(i, j);
             }
         }
+        this.setColor(0);
+        let nextFrameSI = settings.fieldSX + 3;
+        let nextFrameEI = settings.fieldSX + 8;
+        for (let i = nextFrameSI; i <= nextFrameEI; ++i) {
+            for (let j = 0; j < 6; ++j) {
+                if (i == nextFrameSI || j == 0 || i == nextFrameEI || j == 5) {
+                    this.drawCell(i, j);
+                }
+            }
+        }
     },
 
     drawCell: function(i, j) {
