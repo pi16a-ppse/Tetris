@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -29,7 +34,7 @@ canvas {
 #score {
     color: #dadada;
     line-height: 16px;
-    font: 25px "Arial", sans-serif;
+    font: 25px 'Roboto-Regular', sans-serif;
 }
 
 .controls {

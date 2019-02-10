@@ -163,6 +163,9 @@ let frame = {
         this.canvas.height = fieldHeight;
         this.canvas.style.height = fieldHeight + 'px';
         this.context = canvas.getContext('2d');
+        this.context.font = (settings.cellSize - 5) + 'px Roboto-Regular';
+        this.context.textAlign = 'center';
+        this.context.textBaseline = 'middle';
     }
 }
 
