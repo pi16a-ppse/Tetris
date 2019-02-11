@@ -23,6 +23,12 @@ const colors = {
     dark: '#424242'
 }
 
+const side = {
+    left: 1,
+    right: 2,
+    bottom: 3,
+}
+
 const figures = [
    [[1],[1],[1],[1]],
    [[0,0,2],[2,2,2]],
@@ -71,7 +77,7 @@ let game = {
         } else {
             this.figure = figures[this.random(0, 6)];
         }
-        let left = (settings.fieldSX - this.figure.length) / 2;
+        let left = parseInt((settings.fieldSX - this.figure.length) / 2);
         this.figurePosition = [left, 0];
         do {
             this.nextFigure = figures[this.random(0, 6)];
@@ -83,6 +89,27 @@ let game = {
         interval = setInterval(function() {
             frame.drawFrame();
         }, speed);
+    },
+
+    canShift: function(figure, position, direction = side.bottom) {
+        let directionX = 0;
+        if (direction == side.left) directionX = -1;
+        else if (direction == side.left) directionX = 1;
+        let directionY = (direction == side.bottom) ? 1 : 0;
+        let x, y;
+        let result = true;
+        for (let i = 0; i < figure.length && result; ++i)
+            for (let j = 0; j < figure[0].length && result; ++j) {
+                x = position[0] + i + directionX;
+                y = position[1] + j + directionY;
+                if (!this.isOnField(x, y)) result = false;
+                if (figure[i][j] && game.matrix[x][y] != -1) result = false;
+            }
+        return result;
+    },
+
+    isOnField: function(x, y) {
+        return x >= 0 && x < settings.fieldSX && y < settings.fieldSY;
     }
 }
 
