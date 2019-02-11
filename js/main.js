@@ -1,5 +1,5 @@
 const settings = {
-    defaultSpeed: 750,
+    defaultSpeed: 500,
     droppingSpeed: 350,
     cellSize: 20,
     gapSize: 1,
@@ -53,7 +53,7 @@ let game = {
     create: function() {
         this.pause = true;
         this.score = 0;
-        this.speed = settings.defaultSpeed;
+        this.currentSpeed = settings.defaultSpeed;
         this.over = false;
         this.matrix = new Array(settings.fieldSX);
         for (let i = 0; i < settings.fieldSX; ++i) {
@@ -63,7 +63,7 @@ let game = {
             }
         }
         this.addFigure();
-        this.setSpeed();
+        this.setSpeed(this.currentSpeed);
         frame.drawFrame();
     },
 
@@ -87,7 +87,10 @@ let game = {
     setSpeed: function(speed) {
         clearInterval(this.interval);
         interval = setInterval(function() {
-            frame.drawFrame();
+            if (!game.pause) {
+                frame.drawFrame();
+                game.moveFigure();
+            }
         }, speed);
     },
 
@@ -132,7 +135,7 @@ let game = {
     countEmptyCells: function(line) {
         let n = 0;
         for (let i = 0; i < settings.fieldSX; ++i) {
-            if (!matrix[i][line]) {
+            if (this.matrix[i][line] == -1) {
                 ++n;
             }
         }
@@ -149,7 +152,33 @@ let game = {
                     }
                 }
                 ++top;
-                ++score;
+                score += settings.fieldSX;
+            }
+        }
+    },
+
+    moveFigure: function() {
+        if (this.canShift(this.figure, this.figurePosition)) {
+            ++this.figurePosition[1];
+        } else {
+            for (let i = 0; i < this.figure.length; ++i) {
+                for (let j = 0; j < this.figure[0].length; ++j) {
+                    if (this.figure[i][j]) {
+                        let x = this.figurePosition[0] + i;
+                        let y = this.figurePosition[1] + j;
+                        this.matrix[x][y] = this.figure[i][j];
+                    }
+                }
+            }
+            ++score;
+            this.checkLines();
+            let x = parseInt((settings.fieldSX - this.nextFigure.length) / 2);
+            if (!this.canShift(this.nextFigure, [x, -1])) {
+                this.end  = true;
+                frame.drawFrame();
+                clearInterval(game.interval);
+            } else {
+                this.addFigure();
             }
         }
     }
@@ -215,13 +244,13 @@ let frame = {
         for (let i = 0; i < game.figure.length; ++i) {
             for (let j = 0; j < game.figure[0].length; ++j) {
                 if (game.figure[i][j]) {
-                    this.setColor(game.figure[i][j]);
-                    let x = i + game.figurePosition[0] + 1;
-                    let y = j + game.figurePosition[1] + 1;
-                    this.drawCell(x, y);
                     this.setColor(8);
-                    x = i + shadowPosition[0] + 1;
-                    y = j + shadowPosition[1] + 1;
+                    let x = i + shadowPosition[0] + 1;
+                    let y = j + shadowPosition[1] + 1;
+                    this.drawCell(x, y);
+                    this.setColor(game.figure[i][j]);
+                    x = i + game.figurePosition[0] + 1;
+                    y = j + game.figurePosition[1] + 1;
                     this.drawCell(x, y);
                 }
             }
@@ -264,7 +293,7 @@ let frame = {
         this.canvas.height = fieldHeight;
         this.canvas.style.height = fieldHeight + 'px';
         this.context = canvas.getContext('2d');
-        this.context.font = (settings.cellSize - 5) + 'px Roboto-Regular';
+        this.context.font = (settings.cellSize - 5) + 'px Arial';
         this.context.textAlign = 'center';
         this.context.textBaseline = 'middle';
     }
