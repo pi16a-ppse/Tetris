@@ -108,6 +108,21 @@ let game = {
             }
         }
         return n;
+    },
+
+    checkLines: function() {
+        let top = 0;
+        for (let line = settings.fieldSY - 1; line > top; --line) {
+            while (!this.countEmptyCells(line)) {
+                for (let j = line - 1; j >= top; --j) {
+                    for (let i = 0; i < settings.fieldSX; ++i) {
+                        game.matrix[i][j + 1] = game.matrix[i][j];
+                    }
+                }
+                ++top;
+                ++score;
+            }
+        }
     }
 }
 
