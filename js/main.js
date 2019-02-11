@@ -81,6 +81,23 @@ let game = {
         interval = setInterval(function() {
             frame.drawFrame();
         }, speed);
+    },
+
+    rotateFigure: function() {
+        let width = this.figure.length;
+        let height = this.figure[0].length;
+        let rotatedFigure = new Array(height);
+        for (let i = 0; i < height; ++i) {
+            rotatedFigure[i] = new Array(width);
+        }
+        for (var i = 0; i < width; ++i) {
+            for (var j = 0; j < height; ++j) {
+                rotatedFigure[height - j - 1][i] = this.figure[i][j];
+            }
+        }
+        if (this.canShift(rotatedFigure, this.figurePosition)) {
+            this.figure = rotatedFigure;
+        }
     }
 }
 
