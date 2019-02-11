@@ -168,14 +168,22 @@ let frame = {
             let text = (game.end) ? 'GAME OVER' : 'PAUSE';
             this.context.fillText(text, x, y);
         }
-        for (let i = 0; i < game.figure.length; ++i)
-            for (let j = 0; j < game.figure[0].length; ++j)
+        let shadowPosition = [game.figurePosition[0], game.figurePosition[1]];
+        while (game.canShift(game.figure, shadowPosition)) ++shadowPosition[1];
+        for (let i = 0; i < game.figure.length; ++i) {
+            for (let j = 0; j < game.figure[0].length; ++j) {
                 if (game.figure[i][j]) {
                     this.setColor(game.figure[i][j]);
                     let x = i + game.figurePosition[0] + 1;
                     let y = j + game.figurePosition[1] + 1;
                     this.drawCell(x, y);
+                    this.setColor(8);
+                    x = i + shadowPosition[0] + 1;
+                    y = j + shadowPosition[1] + 1;
+                    this.drawCell(x, y);
                 }
+            }
+        }
     },
 
     drawCell: function(i, j) {
