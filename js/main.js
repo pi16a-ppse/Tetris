@@ -1,6 +1,5 @@
-const settings = {
-    defaultSpeed: 500,
-    droppingSpeed: 350,
+const defaultSettings = {
+    defaultSpeed: 250,
     cellSize: 20,
     gapSize: 1,
     offsetSize: undefined,
@@ -8,7 +7,9 @@ const settings = {
     fieldSY: 20
 }
 
-settings.offsetSize = settings.cellSize + settings.gapSize;
+defaultSettings.offsetSize = defaultSettings.cellSize + defaultSettings.gapSize;
+
+let settings = defaultSettings;
 
 const colors = {
     light: '#DADADA',
@@ -26,7 +27,20 @@ const colors = {
 const side = {
     left: 1,
     right: 2,
-    bottom: 3,
+    bottom: 3
+}
+
+const keys = {
+    esc: 27,
+    space: 32,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    a: 65,
+    w: 87,
+    d: 68,
+    s: 83
 }
 
 const figures = [
@@ -52,6 +66,7 @@ let game = {
 
     create: function() {
         this.pause = true;
+        this.end = false;
         this.score = 0;
         this.currentSpeed = settings.defaultSpeed;
         this.over = false;
@@ -63,8 +78,10 @@ let game = {
             }
         }
         this.addFigure();
+    },
+
+    start: function() {
         this.setSpeed(this.currentSpeed);
-        frame.drawFrame();
     },
 
     random: function(minimum, maximum) {
@@ -88,8 +105,8 @@ let game = {
         clearInterval(this.interval);
         interval = setInterval(function() {
             if (!game.pause) {
-                frame.drawFrame();
                 game.moveFigure();
+                frame.drawFrame();
             }
         }, speed);
     },
@@ -97,7 +114,7 @@ let game = {
     canShift: function(figure, position, direction = side.bottom) {
         let directionX = 0;
         if (direction == side.left) directionX = -1;
-        else if (direction == side.left) directionX = 1;
+        else if (direction == side.right) directionX = 1;
         let directionY = (direction == side.bottom) ? 1 : 0;
         let x, y;
         let result = true;
@@ -106,9 +123,19 @@ let game = {
                 x = position[0] + i + directionX;
                 y = position[1] + j + directionY;
                 if (!this.isOnField(x, y)) result = false;
-                if (figure[i][j] && game.matrix[x][y] != -1) result = false;
+                else if (figure[i][j] && game.matrix[x][y] != -1) result = false;
             }
         return result;
+    },
+
+    shiftFigure: function(direction = side.bottom) {
+        let result = this.canShift(this.figure, this.figurePosition, direction);
+        if (result) {
+            if (direction == side.left) --this.figurePosition[0];
+            else if (direction == side.right) ++this.figurePosition[0];
+            else ++this.figurePosition[1]
+        }
+        return result; 
     },
 
     isOnField: function(x, y) {
@@ -158,9 +185,7 @@ let game = {
     },
 
     moveFigure: function() {
-        if (this.canShift(this.figure, this.figurePosition)) {
-            ++this.figurePosition[1];
-        } else {
+        if (!this.shiftFigure()) {
             for (let i = 0; i < this.figure.length; ++i) {
                 for (let j = 0; j < this.figure[0].length; ++j) {
                     if (this.figure[i][j]) {
@@ -182,12 +207,19 @@ let game = {
             this.checkLines();
             let x = parseInt((settings.fieldSX - this.nextFigure.length) / 2);
             if (!this.canShift(this.nextFigure, [x, -1])) {
+                this.pause = true;
                 this.end  = true;
                 frame.drawFrame();
                 clearInterval(game.interval);
             } else {
                 this.addFigure();
             }
+        }
+    },
+
+    dropFigure: function() {
+        while (this.canShift(this.figure, this.figurePosition)) {
+            this.moveFigure();
         }
     }
 }
@@ -307,5 +339,120 @@ let frame = {
     }
 }
 
+let leftButton = document.getElementById('left');
+let rightButton = document.getElementById('right');
+let rotateButton = document.getElementById('rotate');
+let downButton = document.getElementById('down');
+let pauseButton = document.getElementById('pause');
+let restartButton = document.getElementById('restart');
+
+leftButton.addEventListener('click', function(){
+    if (!game.pause) {
+        game.shiftFigure(side.left);
+        frame.drawFrame();
+    }
+});
+
+rightButton.addEventListener('click', function(){
+    if (!game.pause) {
+        game.shiftFigure(side.right);
+        frame.drawFrame();
+    }
+});
+
+rotateButton.addEventListener('click', function(){
+    if (!game.pause) {
+        game.rotateFigure();
+        frame.drawFrame();
+    }
+});
+
+downButton.addEventListener('click', function(){
+    if (!game.pause) {
+        game.dropFigure();
+        frame.drawFrame();
+    }
+});
+
+pauseButton.addEventListener('click', function(){
+    if (!game.pause) game.pause = true;
+    else if (!game.end) game.pause = false;
+    if (!game.end) frame.drawFrame();
+});
+
+restartButton.addEventListener('click', function(){
+    localStorage.removeItem('tetris');
+    settings = defaultSettings;
+    game.create();
+    frame.initialize();
+    frame.drawFrame();
+});
+
+document.addEventListener('keydown', function(event) {
+    switch (event.keyCode) {
+        case keys.space:
+            pauseButton.click();
+            break;
+        case keys.left:
+        case keys.a:
+            leftButton.click();
+            break;
+        case keys.up:
+        case keys.w:
+            rotateButton.click();
+            break;
+        case keys.right:
+        case keys.d:
+            rightButton.click();
+            break;
+        case keys.down:
+        case keys.s:
+            downButton.click();
+            break;
+        case keys.esc:
+            restartButton.click();
+            break;
+    }
+});
+
+window.addEventListener('blur', function() {
+    game.pause = true;
+    frame.drawFrame();
+});
+
+window.addEventListener('unload', function() {
+    game.pause = true;
+    let tetris = {
+        settings: settings,
+        game: {
+            matrix: game.matrix,
+            score: game.score,
+            currentSpeed: game.currentSpeed,
+            nextFigure: game.nextFigure,
+            figure: game.figure,
+            figurePosition: game.figurePosition,
+            pause: game.pause,
+            end: game.end
+        }
+    }
+    localStorage.setItem('tetris', JSON.stringify(tetris));
+});
+
+if (localStorage.getItem('tetris')) {
+    let tetris = JSON.parse(localStorage.getItem('tetris'));
+    settings = tetris.settings;
+    game.matrix = tetris.game.matrix;
+    game.score = tetris.game.score;
+    game.currentSpeed = tetris.game.currentSpeed;
+    game.nextFigure = tetris.game.nextFigure;
+    game.figure = tetris.game.figure;
+    game.figurePosition = tetris.game.figurePosition;
+    game.pause = tetris.game.pause;
+    game.end = tetris.game.end;
+} else {
+    game.create();
+}
+
 frame.initialize();
-game.create();
+frame.drawFrame();
+game.start();
