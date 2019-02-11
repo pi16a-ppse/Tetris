@@ -170,7 +170,7 @@ let game = {
                     }
                 }
             }
-            ++score;
+            score += this.figure.length * this.figure[0].length;
             this.checkLines();
             let x = parseInt((settings.fieldSX - this.nextFigure.length) / 2);
             if (!this.canShift(this.nextFigure, [x, -1])) {
