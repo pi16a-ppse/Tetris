@@ -170,7 +170,15 @@ let game = {
                     }
                 }
             }
-            score += 1;
+            let cost = 0;
+            for (let i = 0; i < this.figure.length; ++i) {
+                for (let j = 0; j < this.figure[0].length; ++j) {
+                    if (this.figure[i][j]) {
+                        ++cost;
+                    }
+                }
+            }
+            score += cost;
             this.checkLines();
             let x = parseInt((settings.fieldSX - this.nextFigure.length) / 2);
             if (!this.canShift(this.nextFigure, [x, -1])) {
