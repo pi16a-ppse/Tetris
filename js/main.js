@@ -98,6 +98,16 @@ let game = {
         if (this.canShift(rotatedFigure, this.figurePosition)) {
             this.figure = rotatedFigure;
         }
+    },
+
+    countEmptyCells: function(line) {
+        let n = 0;
+        for (let i = 0; i < settings.fieldSX; ++i) {
+            if (!matrix[i][line]) {
+                ++n;
+            }
+        }
+        return n;
     }
 }
 
