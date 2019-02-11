@@ -110,6 +110,48 @@ let game = {
 
     isOnField: function(x, y) {
         return x >= 0 && x < settings.fieldSX && y < settings.fieldSY;
+    },
+
+    rotateFigure: function() {
+        let width = this.figure.length;
+        let height = this.figure[0].length;
+        let rotatedFigure = new Array(height);
+        for (let i = 0; i < height; ++i) {
+            rotatedFigure[i] = new Array(width);
+        }
+        for (var i = 0; i < width; ++i) {
+            for (var j = 0; j < height; ++j) {
+                rotatedFigure[height - j - 1][i] = this.figure[i][j];
+            }
+        }
+        if (this.canShift(rotatedFigure, this.figurePosition)) {
+            this.figure = rotatedFigure;
+        }
+    },
+
+    countEmptyCells: function(line) {
+        let n = 0;
+        for (let i = 0; i < settings.fieldSX; ++i) {
+            if (!matrix[i][line]) {
+                ++n;
+            }
+        }
+        return n;
+    },
+
+    checkLines: function() {
+        let top = 0;
+        for (let line = settings.fieldSY - 1; line > top; --line) {
+            while (!this.countEmptyCells(line)) {
+                for (let j = line - 1; j >= top; --j) {
+                    for (let i = 0; i < settings.fieldSX; ++i) {
+                        game.matrix[i][j + 1] = game.matrix[i][j];
+                    }
+                }
+                ++top;
+                ++score;
+            }
+        }
     }
 }
 
