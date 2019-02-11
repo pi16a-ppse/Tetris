@@ -66,11 +66,13 @@ let game = {
     },
 
     addFigure: function() {
-        this.figure = this.nextFigure;
         if (this.nextFigure != undefined) {
+            this.figure = this.nextFigure;
+        } else {
             this.figure = figures[this.random(0, 6)];
         }
-        this.figurePosition = [3, 0];
+        let left = (settings.fieldSX - this.figure.length) / 2;
+        this.figurePosition = [left, 0];
         do {
             this.nextFigure = figures[this.random(0, 6)];
         } while (this.nextFigure == this.figure);
@@ -139,6 +141,14 @@ let frame = {
             let text = (game.end) ? 'GAME OVER' : 'PAUSE';
             this.context.fillText(text, x, y);
         }
+        for (let i = 0; i < game.figure.length; ++i)
+            for (let j = 0; j < game.figure[0].length; ++j)
+                if (game.figure[i][j]) {
+                    this.setColor(game.figure[i][j]);
+                    let x = i + game.figurePosition[0] + 1;
+                    let y = j + game.figurePosition[1] + 1;
+                    this.drawCell(x, y);
+                }
     },
 
     drawCell: function(i, j) {
