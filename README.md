@@ -3,6 +3,8 @@
 
 Игра доступна онлайн: https://pi16a-ppse.github.io/Tetris/
 
+DocBook: https://pi16a-ppse.github.io/Tetris/DocBook.html
+
 ## Особенности
 - Наличие кнопок для игры с мобильных устройств;
 - Поддержка горячих клавиш для комфортной игры с компьютера;
