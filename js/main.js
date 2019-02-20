@@ -1,6 +1,6 @@
 /* базовые настройки, используемые при начале новой игры */
 const defaultSettings = {
-    speed: 300,
+    speed: 200,
     cellSize: 20,
     gapSize: 1,
     offsetSize: undefined,
