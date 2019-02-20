@@ -1,0 +1,39 @@
+<h1>Описание проекта</h1>
+<p>Данный проект является браузерной реализацией классической игры Тетрис.</p>
+<p>Игра доступна онлайн: https://pi16a-ppse.github.io/Tetris/</p>
+<h2>Особенности проекта</h2>
+<p>Наличие кнопок для игры с мобильных устройств;</p>
+<p>Поддержка горячих клавиш для комфортной игры с компьютера;</p>
+<p>Сохранение состояния игры при уходе со страницы и продолжение в любое удобное время;</p>
+<p>Отображение игрового счета для соревнования с друзьями;</p>
+<p>Возможность поставить игру на паузу и сходить за чаем;</p>
+<p>Отображение тени падающей фигуры в месте падения и возможность быстрого сброса;</p>
+<h1>Детали реализации</h1>
+<p>Особенности реализации отдельного функционала представлены ниже:</p>
+<h2>Сохранение состояния игры</h2>
+<p>При уходе со страницы происходит сохранение состояния игры и текущих настроек для возобновления при следующем посещении.</p>
+<pre><code>
+    if (localStorage.getItem(&#39;tetris&#39;)) {
+        let tetris = JSON.parse(localStorage.getItem(&#39;tetris&#39;));
+        settings = tetris.settings;
+        game.matrix = tetris.game.matrix;
+        game.score = tetris.game.score;
+        game.speed = tetris.game.speed;
+        game.nextFigure = tetris.game.nextFigure;
+        game.figure = tetris.game.figure;
+        game.figurePosition = tetris.game.figurePosition;
+        game.pause = tetris.game.pause;
+        game.end = tetris.game.end;
+    } else {
+        game.create();
+    }
+</code></pre>
+<h2>Быстрый сброс фигуры</h2>
+<p>При нажатии клавиши Вниз или S происходит сброс фигуры на позицию, указанную тенью.</p>
+<pre><code>
+    dropFigure: function() {
+        while (this.canShift(this.figure, this.figurePosition)) {
+            this.moveFigure();
+        }
+    }
+</code></pre>
