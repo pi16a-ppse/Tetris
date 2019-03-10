@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<book>
+<article>
     <info>
         <title>Документация к проекту Tetris</title>
         <author>
@@ -91,4 +91,4 @@
             </example>
         </section>
     </chapter>
-</book>
+</article>

@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
 *@description Базовые настройки, используемые при начале новой игры
 */
 const defaultSettings = {
@@ -62,9 +90,9 @@ function create() {
     game.end = false;
     game.score = 0;
     game.matrix = new Array(settings.fieldSX);
-    for (let i = 0; i < settings.fieldSX; ++i) {
+    for (let i = 0; i &lt; settings.fieldSX; ++i) {
         game.matrix[i] = new Array(settings.fieldSY);
-        for (let j = 0; j < settings.fieldSY; ++j) {
+        for (let j = 0; j &lt; settings.fieldSY; ++j) {
             game.matrix[i][j] = -1;
         }
     }
@@ -136,8 +164,8 @@ function canShift(figure, position, direction = side.bottom) {
     /* определение возможности смещения для каждого сегмента фигуры */
     let x, y;
     let result = true;
-    for (let i = 0; i < figure.length && result; ++i)
-        for (let j = 0; j < figure[0].length && result; ++j) {
+    for (let i = 0; i &lt; figure.length &amp;&amp; result; ++i)
+        for (let j = 0; j &lt; figure[0].length &amp;&amp; result; ++j) {
             /* вычисление координат с учетом позиции фигуры, 
             текущего сегмента и смещения */
             x = position[0] + i + directionX;
@@ -146,7 +174,7 @@ function canShift(figure, position, direction = side.bottom) {
             или занята сегментом другой фигуры, то смещение невозможно */
             if (!isOnField(x, y)) {
                 result = false;
-            } else if (figure[i][j] && game.matrix[x][y] != -1) {
+            } else if (figure[i][j] &amp;&amp; game.matrix[x][y] != -1) {
                 result = false;
             }
         }
@@ -181,7 +209,7 @@ function shiftFigure(direction = side.bottom) {
 *@return {boolean} Принадлежность игровому полю
 */
 function isOnField(x, y) {
-    return x >= 0 && x < settings.fieldSX && y < settings.fieldSY;
+    return x >= 0 &amp;&amp; x &lt; settings.fieldSX &amp;&amp; y &lt; settings.fieldSY;
 }
 
 /**
@@ -193,11 +221,11 @@ function rotateFigure() {
     let height = game.figure[0].length;
     /* создание и заполнение матрицы повернутой на 90 градусов фигуры */
     let rotatedFigure = new Array(height);
-    for (let i = 0; i < height; ++i) {
+    for (let i = 0; i &lt; height; ++i) {
         rotatedFigure[i] = new Array(width);
     }
-    for (var i = 0; i < width; ++i) {
-        for (var j = 0; j < height; ++j) {
+    for (var i = 0; i &lt; width; ++i) {
+        for (var j = 0; j &lt; height; ++j) {
             rotatedFigure[height - j - 1][i] = game.figure[i][j];
         }
     }
@@ -215,7 +243,7 @@ function rotateFigure() {
 */
 function countEmptyCells(line) {
     let n = 0;
-    for (let i = 0; i < settings.fieldSX; ++i) {
+    for (let i = 0; i &lt; settings.fieldSX; ++i) {
         if (game.matrix[i][line] == -1) {
             ++n;
         }
@@ -233,7 +261,7 @@ function checkLines() {
         игрового поля пока на текущем ряду все ячейки заполнены */
         while (!countEmptyCells(line)) {
             for (let j = line - 1; j >= top; --j) {
-                for (let i = 0; i < settings.fieldSX; ++i) {
+                for (let i = 0; i &lt; settings.fieldSX; ++i) {
                     game.matrix[i][j + 1] = game.matrix[i][j];
                 }
             }
@@ -253,8 +281,8 @@ function moveFigure() {
     /* если нет возможности сдвинуть фигуру */
     if (!shiftFigure()) {
         /* перенос текущей фигуры в матрицу игрового поля */
-        for (let i = 0; i < game.figure.length; ++i) {
-            for (let j = 0; j < game.figure[0].length; ++j) {
+        for (let i = 0; i &lt; game.figure.length; ++i) {
+            for (let j = 0; j &lt; game.figure[0].length; ++j) {
                 if (game.figure[i][j]) {
                     let x = game.figurePosition[0] + i;
                     let y = game.figurePosition[1] + j;
@@ -264,8 +292,8 @@ function moveFigure() {
         }
         /* подсчет числа сегментов в фигуре и увеличение счета */
         let cost = 0;
-        for (let i = 0; i < game.figure.length; ++i) {
-            for (let j = 0; j < game.figure[0].length; ++j) {
+        for (let i = 0; i &lt; game.figure.length; ++i) {
+            for (let j = 0; j &lt; game.figure[0].length; ++j) {
                 if (game.figure[i][j]) {
                     ++cost;
                 }
@@ -335,13 +363,13 @@ function drawFrame() {
     setColor();
     frame.context.fillRect(0, 0, canvas.width, canvas.height);
     /* отрисовка рамки игрового поля */
-    for (let i = 0; i < settings.fieldSX + 2; ++i) {
-        for (let j = 0; j < settings.fieldSY + 2; ++j) {
+    for (let i = 0; i &lt; settings.fieldSX + 2; ++i) {
+        for (let j = 0; j &lt; settings.fieldSY + 2; ++j) {
             let color = 0;
-            if (i > 0 && 
-                j > 0 && 
-                i < settings.fieldSX + 1 && 
-                j < settings.fieldSY + 1) {
+            if (i > 0 &amp;&amp; 
+                j > 0 &amp;&amp; 
+                i &lt; settings.fieldSX + 1 &amp;&amp; 
+                j &lt; settings.fieldSY + 1) {
                 color = game.matrix[i - 1][j - 1];
             }
             setColor(color);
@@ -351,20 +379,20 @@ function drawFrame() {
     /* определение положения поля следующей фигуры и отрисовка */
     let nextFrameSI = settings.fieldSX + 3;
     let nextFrameEI = settings.fieldSX + 8;
-    for (let i = nextFrameSI; i <= nextFrameEI; ++i) {
-        for (let j = 0; j < 6; ++j) {
+    for (let i = nextFrameSI; i &lt;= nextFrameEI; ++i) {
+        for (let j = 0; j &lt; 6; ++j) {
             if (i == nextFrameSI || j == 0 || i == nextFrameEI || j == 5) {
                 drawCell(i, j);
             }
         }
     }
     /* отрисовка следующей фигуры */
-    for (let i = 0; i < game.nextFigure.length; ++i) {
-        for (let j = 0; j < game.nextFigure[0].length; ++j) {
+    for (let i = 0; i &lt; game.nextFigure.length; ++i) {
+        for (let j = 0; j &lt; game.nextFigure[0].length; ++j) {
             if (game.nextFigure[i][j]) {
                 setColor(game.nextFigure[i][j]);
                 let x = i + nextFrameSI + 1;
-                if (game.nextFigure.length < 3) {
+                if (game.nextFigure.length &lt; 3) {
                     ++x;
                 }
                 let y = j + 2;
@@ -390,8 +418,8 @@ function drawFrame() {
         ++shadowPosition[1];
     }
     /* отрисовка теневой фигуры и текущей */
-    for (let i = 0; i < game.figure.length; ++i) {
-        for (let j = 0; j < game.figure[0].length; ++j) {
+    for (let i = 0; i &lt; game.figure.length; ++i) {
+        for (let j = 0; j &lt; game.figure[0].length; ++j) {
             if (game.figure[i][j]) {
                 setColor(8);
                 let x = i + shadowPosition[0] + 1;
@@ -659,4 +687,26 @@ if (localStorage.getItem('tetris')) {
 /* инициализация графики, отрисовка первого кадра, начало игры */
 initialize();
 drawFrame();
-start();
+start();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addFigure">addFigure</a></li><li><a href="global.html#canShift">canShift</a></li><li><a href="global.html#checkLines">checkLines</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#countEmptyCells">countEmptyCells</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#defaultSettings">defaultSettings</a></li><li><a href="global.html#downButton">downButton</a></li><li><a href="global.html#drawCell">drawCell</a></li><li><a href="global.html#drawFrame">drawFrame</a></li><li><a href="global.html#dropFigure">dropFigure</a></li><li><a href="global.html#figures">figures</a></li><li><a href="global.html#frame">frame</a></li><li><a href="global.html#game">game</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#isOnField">isOnField</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#leftButton">leftButton</a></li><li><a href="global.html#moveFigure">moveFigure</a></li><li><a href="global.html#pauseButton">pauseButton</a></li><li><a href="global.html#random">random</a></li><li><a href="global.html#restartButton">restartButton</a></li><li><a href="global.html#rightButton">rightButton</a></li><li><a href="global.html#rotateButton">rotateButton</a></li><li><a href="global.html#rotateFigure">rotateFigure</a></li><li><a href="global.html#scoreElement">scoreElement</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shiftFigure">shiftFigure</a></li><li><a href="global.html#side">side</a></li><li><a href="global.html#start">start</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Mar 10 2019 03:14:22 GMT+0300 (Moscow Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
